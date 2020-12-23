@@ -25,6 +25,9 @@
           <td> <form action="/delete/{{ $x.ID }}">
             <button type="submit"> Delete</button>
         </form></td>
+        <td> <form action="/edit/{{ $x.ID }}">
+          <button type="submit"> Edit</button>
+      </form></td>
         </tr>{{end}}
       </table>
 </body>

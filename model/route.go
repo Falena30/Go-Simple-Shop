@@ -84,6 +84,18 @@ func sqlQueryInput(nBarang string, nHarga int) {
 		fmt.Println(err.Error())
 	}
 }
+func sqlQueryUpdate(nBarang string, nHarga int, ID int) {
+	db, err := data.Connect()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+	rows, err := db.Query("UPDATE `Daftar_Barang` SET `Nama_Barang` = ?, `Harga_Barang` = ? WHERE `Daftar_Barang`.`ID_Barang` = ?", nBarang, nHarga, ID)
+	defer rows.Close()
+	if err = rows.Err(); err != nil {
+		fmt.Println(err.Error())
+	}
+}
 func sqlDelete(ID int) {
 	db, err := data.Connect()
 	if err != nil {
@@ -155,5 +167,31 @@ func HandleDeleteProsess(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	query, _ := strconv.Atoi(vars["id"])
 	sqlDelete(query)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func HandleEdit(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		vars := mux.Vars(r)
+		query, _ := strconv.Atoi(vars["id"])
+		var Ddata = sqlQuerySelectOne(query)
+		var tmpl = template.Must(template.ParseFiles("view/edit.html"))
+		if err := tmpl.Execute(w, Ddata); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	http.Error(w, "", http.StatusBadRequest)
+}
+
+func HandleProsessEdit(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		vars := mux.Vars(r)
+		query, _ := strconv.Atoi(vars["id"])
+		var nBarang = r.FormValue("nama_barang")
+		var nHarga = r.FormValue("harga_barang")
+		cHarga, _ := strconv.Atoi(nHarga)
+		sqlQueryUpdate(nBarang, cHarga, query)
+	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Daftar Barang</title>
+</head>
+<body>
+    {{range $y, $x := . }}
+    <form action="/edit/process/{{ $x.ID }}" method="post">
+        <label> Nama Barang :</label>
+        <input type="text" placeholder="type name Barang Here" name="nama_barang" value="{{$x.NamaBarang}}" required>
+        <br />
+        
+        <label> Harga Barang :</label>
+        <input type="number" placeholder="type Harga Barang Here" name="harga_barang" value="{{$x.HargaBaang}}" value= required>
+        <br />
+        <button type="submit">Edit</button>
+    </form>
+    {{end}}
+</body>
+</html>
