@@ -1,0 +1,44 @@
+{{define "form"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Barang</title>
+</head>
+<body>
+    <form action="/">
+        <button type="submit"> Back</button>
+    </form>
+    <form action="/process" method="post">
+        <label> Nama Barang :</label>
+        <input type="text" placeholder="type name Barang Here" name="nama_barang" required>
+        <br />
+        
+        <label> Harga Barang :</label>
+        <input type="number" placeholder="type Harga Barang Here" name="harga_barang" required>
+        <br />
+        <button type="submit"> Input</button>
+    </form>
+</body>
+</html>
+{{end}}
+
+{{define "result"}}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Input Berhasil</title>
+    </head>
+    <body>
+        <form action="/">
+            <button type="submit"> Home</button>
+        </form>
+        <h1>Input Berhasil</h1>
+        <p>Nama Barang : {{.nama_barang}}</p>
+        <p>harga Barang : {{.harga_barang}}</p>
+    </body>
+    </html>
+{{end}}
