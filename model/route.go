@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"mux"
 	"net/http"
+	"regexp"
 	"strconv"
 
 	"github.com/Go-Simple-Shop/data"
@@ -15,6 +16,16 @@ type DataBarang struct {
 	NamaBarang string
 	HargaBaang int
 	IDPembuat  string
+}
+
+type CheckoutBuy struct {
+	TotalBarangIndividu int
+	Data                DataBarang
+}
+
+type Checkout struct {
+	TotalSemuaBarang int
+	Check            CheckoutBuy
 }
 
 func SqlQuery() []DataBarang {
@@ -194,4 +205,61 @@ func HandleProsessEdit(w http.ResponseWriter, r *http.Request) {
 		sqlQueryUpdate(nBarang, cHarga, query)
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func HandleResult(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		var dData = SqlQuery()
+		var nSearch = r.FormValue("nama_barang")
+		var result []DataBarang
+		for _, x := range dData {
+			matched, _ := regexp.MatchString(nSearch, x.NamaBarang)
+			if matched {
+				result = append(result, x)
+			}
+		}
+		var tplm = template.Must(template.ParseFiles("view/result.html"))
+		if err := tplm.Execute(w, result); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	http.Error(w, "", http.StatusBadRequest)
+}
+
+func HandleBuy(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "GET" {
+		var Ddata = SqlQuery()
+		var tmpl = template.Must(template.ParseFiles("view/buy.html"))
+		if err := tmpl.Execute(w, Ddata); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	http.Error(w, "", http.StatusBadRequest)
+
+}
+
+func HandleProcessBuy(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		var Ddata = SqlQuery()
+		var result []DataBarang
+		for _, x := range Ddata {
+			var temp = r.FormValue(x.ID)
+			var tempVal = r.FormValue("Value" + x.ID)
+			tempValConv, _ := strconv.Atoi(tempVal)
+			_ = tempVal
+			if temp == x.ID {
+				result = append(result, x)
+				var tampCalcuateIndividu = x.HargaBaang * tempValConv
+				fmt.Println(tampCalcuateIndividu)
+			}
+		}
+		var tmpl = template.Must(template.ParseFiles("view/checkout.html"))
+		if err := tmpl.Execute(w, result); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	http.Error(w, "", http.StatusBadRequest)
 }

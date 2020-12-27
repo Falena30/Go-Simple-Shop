@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy</title>
+</head>
+<body>
+    <form action="/buy/prosess" method="post">
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Nama Barang</th>
+                <th>Harga Barang</th>
+                <th>Beli</th>
+                <th>Jumlah</th>
+            </tr>
+            {{range $y, $x := . }}
+            
+            <tr>
+              <td>{{ $x.ID }}</td>
+              <td>{{ $x.NamaBarang }}</td>
+              <td>{{ $x.HargaBaang }}</td>
+              <td><input type="checkbox" name={{$x.ID}} value={{$x.ID}}> </td>
+              <td><input type="number" name=Value{{$x.ID}}  value="0"></td>
+            </tr>{{end}}
+          </table>
+          <button type="submit"> buy</button>
+    </form>
+    
+</body>
+</html>

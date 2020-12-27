@@ -10,6 +10,9 @@
     <form action="/Masukkan_Barang">
       <button type="submit"> Masukkan Barang</button>
   </form>
+  <form action="/buy">
+    <button type="submit"> Beli Barang</button>
+</form>
     <table>
         <tr>
             <th>ID</th>
@@ -30,5 +33,10 @@
       </form></td>
         </tr>{{end}}
       </table>
+      <form action="/result" method="post">
+        <label> Search : </label>
+        <input type="text" placeholder="type name Barang Here" name="nama_barang" required>
+        <button type="submit">Search</button>
+      </form>
 </body>
 </html>
