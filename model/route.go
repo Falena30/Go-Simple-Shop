@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"time"
 
 	"github.com/Go-Simple-Shop/data"
 )
@@ -19,8 +20,11 @@ type DataBarang struct {
 }
 
 type CheckoutBuy struct {
-	TotalBarangIndividu int
-	Data                DataBarang
+	JumalahBarang     int
+	NamaPembeli       string
+	JumlahHargaBarang int
+	TotalAkhir        int
+	Data              DataBarang
 }
 
 type Checkout struct {
@@ -95,6 +99,19 @@ func sqlQueryInput(nBarang string, nHarga int) {
 		fmt.Println(err.Error())
 	}
 }
+func sqlQueryInputCart(nIDUser int, nBeli string, nIDBarang string, nJmlh int, nTransaksi string) {
+	db, err := data.Connect()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer db.Close()
+	rows, err := db.Query("INSERT INTO `Keranjang`(`ID`, `ID_User`, `Nama_Pemebeli`, `ID_Barang`, `Jumlah`,`NO_Transaksi`) VALUES (?,?,?,?,?,?)", nil, nIDUser, nBeli, nIDBarang, nJmlh, nTransaksi)
+	defer rows.Close()
+	if err = rows.Err(); err != nil {
+		fmt.Println(err.Error())
+	}
+}
+
 func sqlQueryUpdate(nBarang string, nHarga int, ID int) {
 	db, err := data.Connect()
 	if err != nil {
@@ -244,19 +261,38 @@ func HandleProcessBuy(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		var Ddata = SqlQuery()
 		var result []DataBarang
+		_ = result
+		var finalResult []CheckoutBuy
+		var tTamp = CheckoutBuy{}
+		var name = r.FormValue("nama_pembeli")
+		var ntime = time.Now()
+		var Ntransaksi = ntime.String()
+		var totalAkhir = 0
 		for _, x := range Ddata {
 			var temp = r.FormValue(x.ID)
 			var tempVal = r.FormValue("Value" + x.ID)
 			tempValConv, _ := strconv.Atoi(tempVal)
 			_ = tempVal
 			if temp == x.ID {
-				result = append(result, x)
+				tTamp.NamaPembeli = name
+				tTamp.JumalahBarang = tempValConv
+				tTamp.Data.HargaBaang = x.HargaBaang
+				tTamp.Data.ID = x.ID
+				tTamp.Data.NamaBarang = x.NamaBarang
+				//result = append(result, x)
+				//masih menacri untuk nomer transaksi
+				sqlQueryInputCart(1, tTamp.NamaPembeli, tTamp.Data.ID, tTamp.JumalahBarang, Ntransaksi)
 				var tampCalcuateIndividu = x.HargaBaang * tempValConv
-				fmt.Println(tampCalcuateIndividu)
+				totalAkhir = totalAkhir + tampCalcuateIndividu
+				tTamp.JumlahHargaBarang = tampCalcuateIndividu
+				//fmt.Println(tampCalcuateIndividu)
+				finalResult = append(finalResult, tTamp)
 			}
+
 		}
+		tTamp.TotalAkhir = totalAkhir
 		var tmpl = template.Must(template.ParseFiles("view/checkout.html"))
-		if err := tmpl.Execute(w, result); err != nil {
+		if err := tmpl.Execute(w, finalResult); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return

@@ -8,17 +8,25 @@
 <body>
     <table>
         <tr>
-            <th>ID</th>
+            <th>Nama Pembeli</th>
             <th>Nama Barang</th>
             <th>Harga Barang</th>
+            <th>Jumlah Barang</th>
+            <th>Jumlah Harga Barang</th>
         </tr>
         {{range $y, $x := . }}
-        
         <tr>
-          <td>{{ $x.ID }}</td>
-          <td>{{ $x.NamaBarang }}</td>
-          <td>{{ $x.HargaBaang }}</td>
-        </tr>{{end}}
+          <td>{{ $x.NamaPembeli }}</td>
+          <td>{{ $x.Data.NamaBarang }}</td>
+          <td>{{ $x.Data.HargaBaang }}</td>
+          <td>{{ $x.JumalahBarang }}</td>
+          <td>{{ $x.JumlahHargaBarang }}</td>
+        </tr>
+        {{end}}
+        <tr>
+          <td colspan="4">Total Harga : {{.TotalAkhir}}</td>
+        </tr>
+
       </table>
 </body>
 </html>

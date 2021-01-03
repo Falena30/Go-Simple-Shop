@@ -2,7 +2,7 @@ TODO
 
 1. Checkout :
     a. HTML (done)
-    b. System (progress)
+    b. System (nearly done minus final total checkout)
     c. Database (done)
 2. Login :
     a. Database (done)
