@@ -6,6 +6,9 @@
     <title>Checkout</title>
 </head>
 <body>
+  <form action="/">
+    <button type="submit"> Home</button>
+</form>
     <table>
         <tr>
             <th>Nama Pembeli</th>
@@ -13,20 +16,23 @@
             <th>Harga Barang</th>
             <th>Jumlah Barang</th>
             <th>Jumlah Harga Barang</th>
-        </tr>
+        </tr> 
+        {{$z := len .}}
         {{range $y, $x := . }}
+        {{$d := .ForEq $z}}
         <tr>
           <td>{{ $x.NamaPembeli }}</td>
           <td>{{ $x.Data.NamaBarang }}</td>
           <td>{{ $x.Data.HargaBaang }}</td>
           <td>{{ $x.JumalahBarang }}</td>
           <td>{{ $x.JumlahHargaBarang }}</td>
+        </tr>   
+        {{if eq $y $d}}
+        <tr>
+          <td colspan="4">Total Harga : {{$x.TotalAkhir}}</td>
         </tr>
         {{end}}
-        <tr>
-          <td colspan="4">Total Harga : {{.TotalAkhir}}</td>
-        </tr>
-
+        {{end}}
       </table>
 </body>
 </html>

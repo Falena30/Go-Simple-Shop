@@ -279,18 +279,15 @@ func HandleProcessBuy(w http.ResponseWriter, r *http.Request) {
 				tTamp.Data.HargaBaang = x.HargaBaang
 				tTamp.Data.ID = x.ID
 				tTamp.Data.NamaBarang = x.NamaBarang
-				//result = append(result, x)
-				//masih menacri untuk nomer transaksi
 				sqlQueryInputCart(1, tTamp.NamaPembeli, tTamp.Data.ID, tTamp.JumalahBarang, Ntransaksi)
 				var tampCalcuateIndividu = x.HargaBaang * tempValConv
 				totalAkhir = totalAkhir + tampCalcuateIndividu
 				tTamp.JumlahHargaBarang = tampCalcuateIndividu
-				//fmt.Println(tampCalcuateIndividu)
+				tTamp.TotalAkhir = totalAkhir
 				finalResult = append(finalResult, tTamp)
 			}
 
 		}
-		tTamp.TotalAkhir = totalAkhir
 		var tmpl = template.Must(template.ParseFiles("view/checkout.html"))
 		if err := tmpl.Execute(w, finalResult); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -298,4 +295,8 @@ func HandleProcessBuy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Error(w, "", http.StatusBadRequest)
+}
+
+func (c CheckoutBuy) ForEq(Number int) int {
+	return Number - 1
 }
